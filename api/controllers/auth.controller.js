@@ -54,7 +54,7 @@ export const login = async (req, res) => {
         expiresIn: age,
       }
     );
-
+    //TODO:how to implement session instead of cookie?
     res
       .cookie("token", token, {
         httpOnly: true,
@@ -70,5 +70,7 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  //db operations
+  //clear the cookie by clear the cookie name
+  //TODO:how to implement session instead of cookie?
+  res.clearCookie("token").status(200).json({ message: "Logout Successful" });
 };
