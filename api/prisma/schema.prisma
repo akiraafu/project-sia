@@ -12,3 +12,13 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+//run "npx prisma db push" after making ant changes on prisema.schema
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId //connect mongodb id with user model id using map
+  email     String   @unique
+  username  String   @unique
+  password  String
+  avatar    String? //can be empty
+  createdAt DateTime @default(now())
+}
