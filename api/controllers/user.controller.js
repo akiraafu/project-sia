@@ -51,7 +51,9 @@ export const updateUser = async (req, res) => {
       },
     });
 
-    res.status(200).json(updatedUser);
+    //ensure we are not returning user password, even is encrypted
+    const { password: userNewPassword, ...rest } = updatedUser;
+    res.status(200).json(rest);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Failed to update user" });
