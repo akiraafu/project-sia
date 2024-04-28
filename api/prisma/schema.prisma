@@ -15,13 +15,14 @@ datasource db {
 
 //run "npx prisma db push" after making ant changes on prisema.schema
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId //connect mongodb id with user model id using map
-  email     String   @unique
-  username  String   @unique
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId //connect mongodb id with user model id using map
+  email     String      @unique
+  username  String      @unique
   password  String
   avatar    String? //can be empty
-  createdAt DateTime @default(now())
+  createdAt DateTime    @default(now())
   posts     Post[]
+  SavedPost SavedPost[]
 }
 
 model Post {
@@ -41,6 +42,7 @@ model Post {
   user       User        @relation(fields: [userId], references: [id])
   userId     String      @db.ObjectId
   postDetail PostDetail?
+  SavedPost  SavedPost[]
 }
 
 enum Type {
@@ -67,4 +69,17 @@ model PostDetail {
   restaurant Int?
   post       Post    @relation(fields: [postId], references: [id])
   postId     String  @unique @db.ObjectId
+}
+
+//user can save posts
+model SavedPost {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+  userId    String   @unique @db.ObjectId
+  postId    String   @unique @db.ObjectId
+  createdAt DateTime @default(now())
+
+  //same user not save the same post again
+  @@unique([userId, postId])
 }
