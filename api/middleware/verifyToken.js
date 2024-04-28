@@ -10,7 +10,7 @@ export const verifyToken = (req, res, next) => {
 
     req.userId = payload.id;
     req.username = payload.username;
-    console.log(payload);
+
     next();
   });
 };
