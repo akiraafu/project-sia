@@ -101,15 +101,17 @@ export const savePost = async (req, res) => {
           id: savedPost.id,
         },
       });
-
+      console.log(savedPost);
       res.status(200).json({ message: "Post removed from saved list" });
     } else {
+      console.log(tokenUserId, postId);
       await prisma.savedPost.create({
         data: {
           userId: tokenUserId,
           postId,
         },
       });
+
       res.status(200).json({ message: "Post saved" });
     }
   } catch (error) {
