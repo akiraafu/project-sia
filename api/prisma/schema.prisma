@@ -23,6 +23,8 @@ model User {
   createdAt DateTime    @default(now())
   posts     Post[]
   SavedPost SavedPost[]
+  chats     Chat[]      @relation(fields: [chatIDs], references: [id])
+  chatIDs   String[]    @db.ObjectId
 }
 
 model Post {
@@ -82,4 +84,23 @@ model SavedPost {
 
   //same user not save the same post again
   @@unique([userId, postId])
+}
+
+model Chat {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  users       User[]    @relation(fields: [userIDs], references: [id])
+  userIDs     String[]  @db.ObjectId
+  createdAt   DateTime  @default(now())
+  seenBy      String[]  @db.ObjectId
+  Message     Message[]
+  lastMessage String?
+}
+
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  text      String
+  userId    String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  chatId    String   @db.ObjectId
+  createdAt DateTime @default(now())
 }
