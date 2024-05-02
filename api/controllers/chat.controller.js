@@ -1,14 +1,20 @@
 import prisma from "../lib/prisma.js";
-import bcrypt from "bcrypt";
 
 export const getChats = async (req, res) => {
+  const tokenUserId = req.userId;
   try {
-    const users = await prisma.user.findMany();
+    const chats = await prisma.chat.findMany({
+      where: {
+        userIDs: {
+          hasSome: [tokenUserId],
+        },
+      },
+    });
     //TODO: find out the difference between with or without "return", both working
-    return res.status(200).json(users);
+    return res.status(200).json(chats);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Failed to get users" });
+    res.status(500).json({ message: "Failed to get chats" });
   }
 };
 
@@ -21,72 +27,30 @@ export const getChat = async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Failed to get user" });
+    res.status(500).json({ message: "Failed to get chat" });
   }
 };
 
 export const addChat = async (req, res) => {
-  const id = req.params.id;
-  const tokenUserId = req.userId;
-  const { password, avatar, ...userInputs } = req.body;
-
-  if (id !== tokenUserId) {
-    return res.status(403).json({ message: "Not authorized" });
-  }
-
-  //if have password, hash it first
-  let updatedPassword = null;
   try {
-    if (password) {
-      updatedPassword = await bcrypt.hash(password, 10);
-    }
-    const updatedUser = await prisma.user.update({
+    const user = await prisma.user.findUnique({
       where: { id },
-      data: {
-        ...userInputs,
-        ...(updatedPassword && { password: updatedPassword }),
-        ...(avatar && { avatar }),
-      },
     });
-
-    //ensure we are not returning user password, even is encrypted
-    const { password: userNewPassword, ...rest } = updatedUser;
-    res.status(200).json(rest);
+    res.status(200).json(user);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Failed to update user" });
+    res.status(500).json({ message: "Failed to add chat" });
   }
 };
 
 export const readChat = async (req, res) => {
-  const id = req.params.id;
-  const tokenUserId = req.userId;
-  const { password, avatar, ...userInputs } = req.body;
-
-  if (id !== tokenUserId) {
-    return res.status(403).json({ message: "Not authorized" });
-  }
-
-  //if have password, hash it first
-  let updatedPassword = null;
   try {
-    if (password) {
-      updatedPassword = await bcrypt.hash(password, 10);
-    }
-    const updatedUser = await prisma.user.update({
+    const user = await prisma.user.findUnique({
       where: { id },
-      data: {
-        ...userInputs,
-        ...(updatedPassword && { password: updatedPassword }),
-        ...(avatar && { avatar }),
-      },
     });
-
-    //ensure we are not returning user password, even is encrypted
-    const { password: userNewPassword, ...rest } = updatedUser;
-    res.status(200).json(rest);
+    res.status(200).json(user);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Failed to update user" });
+    res.status(500).json({ message: "Failed to read chat" });
   }
 };
