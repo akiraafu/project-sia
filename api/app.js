@@ -3,6 +3,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.route.js";
 import usersRoutes from "./routes/user.route.js";
+import chatsRoutes from "./routes/chat.route.js";
+import messagesRoutes from "./routes/message.route.js";
 import postsRoutes from "./routes/post.route.js";
 import testRoutes from "./routes/test.route.js";
 
@@ -20,6 +22,8 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/posts", postsRoutes);
+app.use("/api/chats", chatsRoutes);
+app.use("/api/messages", messagesRoutes);
 
 app.use("/api/test", testRoutes);
 
